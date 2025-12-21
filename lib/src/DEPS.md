@@ -4,6 +4,10 @@ Dependencies that create loops (inversions) are marked with `!`.
 -->
 
 ```mermaid
+---
+config:
+  direction: LR
+---
 flowchart TD;
 analyzer.dart-->cli.dart;
 analyzer.dart-->layering.dart;
