@@ -19,6 +19,8 @@ import 'package:path/path.dart' as path;
 import 'cli.dart';
 import 'model.dart';
 
+typedef MermaidOption = ({String key, String value});
+
 class MdGenerator {
   final String rootDir;
   final SourceFolder sourceFolder;
@@ -26,6 +28,7 @@ class MdGenerator {
   final bool failIfChanged;
   final bool failOnCycles;
   final ExitCallback? exitFn;
+  final List<MermaidOption> mermaidOptions;
 
   MdGenerator({
     required this.rootDir,
@@ -33,6 +36,7 @@ class MdGenerator {
     required this.filter,
     required this.failIfChanged,
     required this.failOnCycles,
+    required this.mermaidOptions,
     this.exitFn,
   });
 
@@ -69,7 +73,7 @@ class MdGenerator {
       return false;
     }
 
-    final diagram = content(folder);
+    final diagram = content(folder, mermaidOptions);
     if (diagram == null) {
       await deleteDiagramFile(path: filePath, failIfExists: failIfChanged);
       return false;
@@ -86,7 +90,10 @@ class MdGenerator {
     return true;
   }
 
-  static String? content(SourceFolder folder) {
+  static String? content(
+    SourceFolder folder,
+    List<MermaidOption> mermaidOptions,
+  ) {
     final items = <String>[];
     for (final consumer in folder.children.values) {
       for (final dependency in consumer.siblingDependencies) {
@@ -109,6 +116,16 @@ class MdGenerator {
     result.writeln('-->');
     result.writeln('');
     result.writeln('```mermaid');
+
+    if (mermaidOptions.isNotEmpty) {
+      result.writeln('---');
+      result.writeln('config:');
+      for (final option in mermaidOptions) {
+        result.writeln('  ${option.key}: ${option.value}');
+      }
+      result.writeln('---');
+    }
+
     result.writeln('flowchart TD;');
     result.writeln(items.join('\n'));
     result.writeln('```');
