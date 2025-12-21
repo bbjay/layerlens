@@ -115,9 +115,7 @@ void main(List<String> args) async {
   // Prepare Mermaid options, extendable.
   List<MermaidOption> mermaidOptions() {
     return [
-      // Ignore arg if default value is used.
-      if (parsedArgs[CliOptions.layout.name] != 'dagre')
-        (key: 'layout', value: parsedArgs[CliOptions.layout.name]),
+      (key: 'layout', value: parsedArgs[CliOptions.layout.name]),
     ];
   }
 
