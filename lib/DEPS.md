@@ -4,10 +4,6 @@ Dependencies that create loops (inversions) are marked with `!`.
 -->
 
 ```mermaid
----
-config:
-  layout: elk
----
 flowchart TD;
 layerlens.dart-->src;
 ```
