@@ -76,9 +76,10 @@ void main(List<String> args) async {
       help: 'Layout engine to use for Mermaid diagrams.'
           '\nCertain markdown preview plugins may not support all layout engines.'
           '\n$_mermaidLayoutDocLink.',
+      defaultsTo: 'dagre',
       allowed: ['elk', 'dagre'],
       allowedHelp: {
-        'dagre': 'Mermaid\'s default layout engine. (default).',
+        'dagre': 'Mermaid\'s default layout engine.',
         'elk': 'ELK layout engine (experimental).',
       },
     );
@@ -114,6 +115,7 @@ void main(List<String> args) async {
   // Prepare Mermaid options, extendable.
   List<MermaidOption> mermaidOptions() {
     return [
+      // Ignore arg if default value is used.
       if (parsedArgs[CliOptions.layout.name] != 'dagre')
         (key: 'layout', value: parsedArgs[CliOptions.layout.name]),
     ];
