@@ -91,7 +91,7 @@ void main() {
     final analyzer = Analyzer(deps);
 
     final content =
-        MdGenerator.content(analyzer.root.children['lib'] as SourceFolder);
+        MdGenerator.content(analyzer.root.children['lib'] as SourceFolder, []);
     expect(content, contains('--!-->'));
     expect(content, contains('this folder: 1'));
     expect(content, contains('sub-folders: 2'));
@@ -108,6 +108,7 @@ void main() {
         filter: Filter.empty(),
         failIfChanged: false,
         failOnCycles: true,
+        mermaidOptions: [],
         exitFn: exitMock,
       );
 
@@ -137,6 +138,7 @@ void main() {
         ),
         failIfChanged: false,
         failOnCycles: true,
+        mermaidOptions: [],
         exitFn: exitMock,
       );
 
@@ -166,6 +168,7 @@ void main() {
         ),
         failIfChanged: false,
         failOnCycles: true,
+        mermaidOptions: [],
         exitFn: exitMock,
       );
 
@@ -195,6 +198,7 @@ void main() {
         ),
         failIfChanged: false,
         failOnCycles: true,
+        mermaidOptions: [],
         exitFn: exitMock,
       );
 
@@ -229,6 +233,7 @@ void main() {
         ),
         failIfChanged: false,
         failOnCycles: true,
+        mermaidOptions: [],
         exitFn: exitMock,
       );
 
@@ -263,6 +268,7 @@ void main() {
         ),
         failIfChanged: false,
         failOnCycles: true,
+        mermaidOptions: [],
         exitFn: exitMock,
       );
 
@@ -298,6 +304,7 @@ void main() {
         ),
         failIfChanged: false,
         failOnCycles: true,
+        mermaidOptions: [],
         exitFn: exitMock,
       );
 
@@ -330,6 +337,7 @@ void main() {
         ),
         failIfChanged: false,
         failOnCycles: true,
+        mermaidOptions: [],
         exitFn: exitMock,
       );
 
@@ -366,6 +374,7 @@ void main() {
         ),
         failIfChanged: false,
         failOnCycles: true,
+        mermaidOptions: [],
         exitFn: exitMock,
       );
 
@@ -400,6 +409,7 @@ void main() {
         ),
         failIfChanged: false,
         failOnCycles: true,
+        mermaidOptions: [],
         exitFn: exitMock,
       );
 
