@@ -14,19 +14,14 @@
 
 import 'dart:io';
 
-// ignore: implementation_imports
-import 'package:surveyor/src/driver.dart';
-// ignore: implementation_imports
-import 'package:surveyor/src/visitors.dart';
-import 'package:path/path.dart' as p;
-
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/ast/visitor.dart';
-// ignore: implementation_imports
-import 'package:analyzer/src/generated/source.dart';
+import 'package:analyzer/source/line_info.dart';
+import 'package:path/path.dart' as p;
 
-import 'model.dart';
 import 'cli.dart';
+import 'model.dart';
+import 'surveyor/visitors.dart';
 
 Future<Dependencies> collectDeps({
   required String rootDir,
@@ -37,13 +32,11 @@ Future<Dependencies> collectDeps({
     rootDir: rootDir,
   );
   var driver = Driver.forArgs([rootDir]);
-  driver.forceSkipInstall = true;
-  driver.showErrors = true;
   driver.resolveUnits = true;
   driver.visitor = collector;
   driver.silent = true;
 
-  await driver.analyze(requirePackagesFile: false);
+  await driver.analyze();
   return collector.collectedDeps;
 }
 
@@ -94,7 +87,7 @@ class _DepsCollector extends RecursiveAstVisitor
     return super.visitExportDirective(node);
   }
 
-  _collectDep(Dependency? dependency) {
+  void _collectDep(Dependency? dependency) {
     if (dependency == null) return;
 
     if (!collectedDeps.containsKey(dependency.consumer)) {

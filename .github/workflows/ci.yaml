@@ -1,10 +1,10 @@
-name: Dart
+name: CI
 
 on:
   push:
-    branches: [ main]
+    branches: [main]
   pull_request:
-    branches: [ main]
+    branches: [main]
 
 jobs:
   CI:
@@ -12,20 +12,21 @@ jobs:
     steps:
       # These are the latest versions of the github actions; dependabot will
       # send PRs to keep these up-to-date.
-      - uses: actions/checkout@v3
-      - uses: dart-lang/setup-dart@v1.3
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
         with:
-          sdk: main
+          channel: master
 
       - name: Version
-        run: dart --version
+        run: |
+          flutter --version
+          dart --version
+
+      - name: Precache Flutter engine artifacts
+        run: flutter precache --universal --linux
 
       - name: Install dependencies
-        run: dart pub get
-
-      - name: Install example dependencies
-        working-directory: example
-        run: dart pub get
+        run: flutter pub get
 
       - name: Verify formatting
         run: dart format --output=none --set-exit-if-changed .
@@ -33,8 +34,40 @@ jobs:
       - name: Analyze project source
         run: dart analyze --fatal-infos
 
-      - name: Run tests
-        run: dart test
+      # Each `run:` step runs in a fresh shell, so a plain bash variable
+      # wouldn't survive to the next step. Writing to $GITHUB_ENV exports
+      # PACKAGES so the Test and Cycles steps below can read it.
+      - name: Find packages
+        run: |
+          pkgs=$(find . -mindepth 2 -name pubspec.yaml -not -path '*/.dart_tool/*' | xargs -n1 dirname | sort)
+          echo "Found packages:"
+          echo "$pkgs"
+          {
+            echo "PACKAGES<<EOF"
+            echo "$pkgs"
+            echo "EOF"
+          } >> "$GITHUB_ENV"
 
-      - name: Check for cycles
-        run: dart run layerlens --fail-on-cycles --fail-if-changed
+      - name: Test packages
+        run: |
+          set -e
+          while IFS= read -r pkg; do
+            echo "::group::Test $pkg"
+            (cd "$pkg" && flutter test)
+            echo "::endgroup::"
+          done <<< "$PACKAGES"
+
+      # The example package has intentional cycles to demo layerlens, so
+      # skip it here.
+      - name: Check for cycles in packages
+        run: |
+          set -e
+          while IFS= read -r pkg; do
+            if [[ "$pkg" == "./pkgs/layerlens/example" ]]; then
+              echo "Skip cycles check for $pkg (intentional cycles)"
+              continue
+            fi
+            echo "::group::Cycles $pkg"
+            (cd "$pkg" && dart run layerlens --fail-on-cycles --fail-if-changed)
+            echo "::endgroup::"
+          done <<< "$PACKAGES"
