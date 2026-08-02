@@ -46,18 +46,28 @@ abstract class SourceNode {
     shortName = path.last;
   }
 
+  /// Path from the folder of this node to [otherNode].
   Path relativePathTo(SourceNode otherNode) {
-    for (var i = 0; i < otherNode.path.length; i++) {
-      if (i < path.length && path[i] == otherNode.path[i]) {
-        continue;
-      } else {
-        // i corresponds to the number of equal path elements 
-        final upCount = max(0, path.length - 1 - i);
-        return [...List.filled(upCount, '..'), ...otherNode.path.skip(i)];
-      }
+    // A folder is walked from inside itself, while a file is walked from the
+    // folder that contains it. The root folder's path is '.', which is not a
+    // folder to walk out of.
+    final from = (this is SourceFolder ? path : path.take(path.length - 1)).where((e) => e != '.').toList();
+    final to = otherNode.path.where((e) => e != '.').toList();
+
+    final maxCommon = min(from.length, to.length);
+    var common = 0;
+    while (common < maxCommon && from[common] == to[common]) {
+      common++;
     }
-    // when the paths are identical
-    return [path.last];
+
+    final result = [...List.filled(from.length - common, '..'), ...to.skip(common)];
+
+    if (result.isEmpty || result.last == '..') {
+      // otherNode is a folder this node is located in.
+      result.add('.');
+    }
+
+    return result;
   }
 }
 
