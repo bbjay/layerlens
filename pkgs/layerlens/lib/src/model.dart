@@ -12,6 +12,8 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+import 'dart:math';
+
 import 'package:glob/glob.dart';
 
 import 'cli.dart';
@@ -42,6 +44,20 @@ abstract class SourceNode {
             .where((e) => e.trim().isNotEmpty)
             .toList() {
     shortName = path.last;
+  }
+
+  Path relativePathTo(SourceNode otherNode) {
+    for (var i = 0; i < otherNode.path.length; i++) {
+      if (i < path.length && path[i] == otherNode.path[i]) {
+        continue;
+      } else {
+        // i corresponds to the number of equal path elements 
+        final upCount = max(0, path.length - 1 - i);
+        return [...List.filled(upCount, '..'), ...otherNode.path.skip(i)];
+      }
+    }
+    // when the paths are identical
+    return [path.last];
   }
 }
 
