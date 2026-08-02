@@ -109,16 +109,23 @@ class MdGenerator {
     result.writeln('-->');
     result.writeln('');
     if (folder.path.length > 1) {
-      result.writeln('[..](..${pathSeparator}DEPS.md)');
+      result.writeln('[..$pathSeparator](..${pathSeparator}DEPS.md)');
     }
     final subFoldersWithDeps = folder.children.values
         .whereType<SourceFolder>()
-        .where((f) => f.children.values.any((c) => c.siblingDependencies.isNotEmpty));
+        .where((f) => f.children.values.any((c) => c.siblingDependencies.isNotEmpty))
+        .toList()
+      ..sort(((a, b) => a.shortName.compareTo(b.shortName)));
+    result.writeln('${folder.shortName}${subFoldersWithDeps.isNotEmpty ? ' $pathSeparator' : ''}');
+    var subFolders = <String>[];
     for (final subFolder in subFoldersWithDeps) {
-      result.writeln('[${subFolder.shortName}](${[
+      subFolders.add('[${subFolder.shortName}](${[
         ...folder.relativePathTo(subFolder),
         'DEPS.md',
       ].join(pathSeparator)})');
+    }
+    if (subFolders.isNotEmpty) {
+      result.writeln(subFolders.join(' |\n'));
     }
     result.writeln('');
     result.writeln('```mermaid');
