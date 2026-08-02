@@ -108,6 +108,19 @@ class MdGenerator {
     );
     result.writeln('-->');
     result.writeln('');
+    if (folder.path.length > 1) {
+      result.writeln('[..](..${pathSeparator}DEPS.md)');
+    }
+    final subFoldersWithDeps = folder.children.values
+        .whereType<SourceFolder>()
+        .where((f) => f.children.values.any((c) => c.siblingDependencies.isNotEmpty));
+    for (final subFolder in subFoldersWithDeps) {
+      result.writeln('[${subFolder.shortName}](${[
+        ...folder.relativePathTo(subFolder),
+        'DEPS.md',
+      ].join(pathSeparator)})');
+    }
+    result.writeln('');
     result.writeln('```mermaid');
     result.writeln('flowchart TD;');
     result.writeln(items.join('\n'));
