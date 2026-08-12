@@ -51,7 +51,9 @@ abstract class SourceNode {
     // A folder is walked from inside itself, while a file is walked from the
     // folder that contains it. The root folder's path is '.', which is not a
     // folder to walk out of.
-    final from = (this is SourceFolder ? path : path.take(path.length - 1)).where((e) => e != '.').toList();
+    final from = (this is SourceFolder ? path : path.take(path.length - 1))
+        .where((e) => e != '.')
+        .toList();
     final to = otherNode.path.where((e) => e != '.').toList();
 
     final maxCommon = min(from.length, to.length);
@@ -60,7 +62,10 @@ abstract class SourceNode {
       common++;
     }
 
-    final result = [...List.filled(from.length - common, '..'), ...to.skip(common)];
+    final result = [
+      ...List.filled(from.length - common, '..'),
+      ...to.skip(common),
+    ];
 
     if (result.isEmpty || result.last == '..') {
       // otherNode is a folder this node is located in.

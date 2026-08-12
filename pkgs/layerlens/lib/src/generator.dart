@@ -113,10 +113,14 @@ class MdGenerator {
     }
     final subFoldersWithDeps = folder.children.values
         .whereType<SourceFolder>()
-        .where((f) => f.children.values.any((c) => c.siblingDependencies.isNotEmpty))
+        .where(
+          (f) => f.children.values.any((c) => c.siblingDependencies.isNotEmpty),
+        )
         .toList()
       ..sort(((a, b) => a.shortName.compareTo(b.shortName)));
-    result.writeln('${folder.shortName}${subFoldersWithDeps.isNotEmpty ? ' $pathSeparator' : ''}');
+    result.writeln(
+      '${folder.shortName}${subFoldersWithDeps.isNotEmpty ? ' $pathSeparator' : ''}',
+    );
     var subFolders = <String>[];
     for (final subFolder in subFoldersWithDeps) {
       subFolders.add('[${subFolder.shortName}](${[
