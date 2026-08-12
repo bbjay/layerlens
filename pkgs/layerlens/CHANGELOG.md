@@ -1,3 +1,7 @@
+# 3.1.0
+
+* added markdown navigation links
+
 # 3.0.5
 
 * Stopped depending on `surveyor`.
