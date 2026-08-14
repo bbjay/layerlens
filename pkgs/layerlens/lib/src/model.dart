@@ -12,6 +12,8 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+import 'dart:math';
+
 import 'package:glob/glob.dart';
 
 import 'cli.dart';
@@ -42,6 +44,35 @@ abstract class SourceNode {
             .where((e) => e.trim().isNotEmpty)
             .toList() {
     shortName = path.last;
+  }
+
+  /// Path from the folder of this node to [otherNode].
+  Path relativePathTo(SourceNode otherNode) {
+    // A folder is walked from inside itself, while a file is walked from the
+    // folder that contains it. The root folder's path is '.', which is not a
+    // folder to walk out of.
+    final from = (this is SourceFolder ? path : path.take(path.length - 1))
+        .where((e) => e != '.')
+        .toList();
+    final to = otherNode.path.where((e) => e != '.').toList();
+
+    final maxCommon = min(from.length, to.length);
+    var common = 0;
+    while (common < maxCommon && from[common] == to[common]) {
+      common++;
+    }
+
+    final result = [
+      ...List.filled(from.length - common, '..'),
+      ...to.skip(common),
+    ];
+
+    if (result.isEmpty || result.last == '..') {
+      // otherNode is a folder this node is located in.
+      result.add('.');
+    }
+
+    return result;
   }
 }
 

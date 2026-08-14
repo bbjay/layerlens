@@ -1,3 +1,12 @@
+# 3.1.0
+
+* added markdown navigation links
+
+# 3.0.5
+
+* Stopped depending on `surveyor`.
+* Removed `surveyor` related build constraints.
+
 # 3.0.4
 
 * Output content of the diagram, that caused failures.
