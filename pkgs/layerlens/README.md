@@ -116,7 +116,7 @@ For more complex dependency graphs, you may want to use the [`elk` layout engine
 |:---:|:---:|
 |![Dagre layout engine](./example/screenshots/DEFAULT%20LAYOUT.png)|![Elk Layout Engine](./example/screenshots/ELK%20LAYOUT.png)|
 
->*Note: Some VSCode Markdown plugins do not support the `elk` engine yet, and will not produce different outputs to the default!.*
+>*Note: GitHub does not support the `elk` engine yet. Official VSCode Markdown preview supports it, but other plugins might not.*
 
 ## Supported languages
 
